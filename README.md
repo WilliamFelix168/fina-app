@@ -35,7 +35,9 @@ src/
 │       ├── layout.tsx      # Dashboard shell
 │       └── page.tsx        # Dashboard view
 ├── components/
-│   └── ui/                 # shadcn/ui primitives
+│   ├── layout/
+│   │   └── app-sidebar.tsx  # Collapsible sidebar with nav (Dashboard, Transaction)
+│   └── ui/                  # shadcn/ui primitives
 │       ├── button.tsx
 │       ├── card.tsx
 │       ├── input.tsx
@@ -61,6 +63,7 @@ npm run lint     # ESLint
 
 ## Roadmap
 
+- [x] Dashboard layout with collapsible sidebar
 - [ ] Transaction tracking
 - [ ] Budget management
 - [ ] AI-powered spending insights
