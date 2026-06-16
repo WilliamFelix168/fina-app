@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 export async function getBalanceSummary() {
   const supabase = await createClient();
 
-  const { data } = await supabase.from("transactions").select("amount,type");
+  const { data } = await supabase.from("transactions").select("amount, type");
 
   const { totalIncome, totalExpense, savings } = (data || []).reduce(
     (acc, tx) => {
@@ -37,12 +37,12 @@ export async function getTransactions(params?: {
   const supabase = await createClient();
   let query = supabase
     .from("transactions")
-    .select("id,amount,type,description,date,category", {
+    .select("id, amount, type, description, date, category", {
       count: "exact",
     });
 
   if (search) {
-    query = query.ilike("description", `%${search}}%`);
+    query = query.ilike("description", `%${search}%`);
   }
 
   const from = (page - 1) * limit;
