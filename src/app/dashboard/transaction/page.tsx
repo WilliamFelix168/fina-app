@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import Transaction from "./_components/transactions";
+import Transaction from "./_components/transaction";
 
 export const metadata: Metadata = {
   title: "Fina - Transcations",
