@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import ChatbotDrawer from "./_components/chatbot-drawer";
 
 export default function DashboardLayout({
   children,
@@ -12,6 +13,7 @@ export default function DashboardLayout({
       <main className="flex-1 p-4">
         <SidebarTrigger />
         {children}
+        <ChatbotDrawer></ChatbotDrawer>
       </main>
     </SidebarProvider>
   );
