@@ -5,11 +5,10 @@ import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: ENVIRONMENT.googleGenAIKey });
 
-//message: string
-export async function handleChat() {
+export async function handleChat(message: string) {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    contents: "Kamu itu siapa?",
+    contents: message,
     config: {},
   });
 
