@@ -11,13 +11,18 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { handleChat } from "@/features/ai/chat";
+import { handleChat, handleChatWithThinking } from "@/features/ai/chat";
 import { cn } from "@/lib/utils";
-import { BotIcon, EllipsisIcon, XIcon } from "lucide-react";
+import { BotIcon, ChevronDownIcon, EllipsisIcon, XIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import ChatbotTextarea from "./chatbot-textarea";
 import { useMutation } from "@tanstack/react-query";
 import Markdown from "react-markdown";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 export default function ChatbotDrawer() {
   const chatRef = useRef<HTMLDivElement>(null);
@@ -26,6 +31,7 @@ export default function ChatbotDrawer() {
       role: string;
       parts: {
         text: string;
+        thought?: boolean;
       }[];
     }[]
   >([]);
@@ -48,6 +54,30 @@ export default function ChatbotDrawer() {
     },
   });
 
+  const {
+    mutate: handleChatWithThinkingMutation,
+    isPending: isPendingChatWithThinking,
+  } = useMutation({
+    mutationFn: handleChatWithThinking,
+    onSuccess: (response) => {
+      const botMessage = {
+        role: "model",
+        parts: [
+          { thought: true, text: response?.thought || "Terjadi Kesalahan" },
+          { text: response?.answer || "Terjadi Kesalahan" },
+        ],
+      };
+      setConversation((prev) => [...prev, botMessage]);
+    },
+    onError: (error) => {
+      const botMessage = {
+        role: "model",
+        parts: [{ text: "Terjadi Kesalahan " + error.message }],
+      };
+      setConversation((prev) => [...prev, botMessage]);
+    },
+  });
+
   function sendMessage(message: string) {
     const newMesage = {
       role: "user",
@@ -55,6 +85,7 @@ export default function ChatbotDrawer() {
     };
     setConversation((prev) => [...prev, newMesage]);
     handleChatMutation(message);
+    //handleChatWithThinkingMutation(message);
   }
 
   useEffect(() => {
@@ -124,7 +155,27 @@ export default function ChatbotDrawer() {
                     )}
                     {message.role === "model" ? (
                       <div className="response-ai">
-                        <Markdown>{message.parts[0].text}</Markdown>
+                        {message.parts.map((part, indexPart) => (
+                          <div key={`response-ai-key-${index}-${indexPart}`}>
+                            {part.thought ? (
+                              <Collapsible>
+                                <CollapsibleTrigger asChild>
+                                  <Button variant="ghost">
+                                    Tampilkan alur berpikir
+                                    <ChevronDownIcon />
+                                  </Button>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent>
+                                  <div className="ml-4 border-l pl-2">
+                                    <Markdown>{part.text}</Markdown>
+                                  </div>
+                                </CollapsibleContent>
+                              </Collapsible>
+                            ) : (
+                              <Markdown>{part.text}</Markdown>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     ) : (
                       message.parts[0].text
